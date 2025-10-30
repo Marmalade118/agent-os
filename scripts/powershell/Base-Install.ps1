@@ -41,7 +41,7 @@ function Write-BootstrapError {
 
 # Download common-functions.ps1 first
 function Get-CommonFunctions {
-    $functionsUrl = "$REPO_URL/raw/main/scripts/powershell/Common-Functions.ps1"
+    $functionsUrl = "$REPO_URL/raw/feat/windows-support/scripts/powershell/Common-Functions.ps1"
     $commonFunctionsTemp = Join-Path $TEMP_DIR "Common-Functions.ps1"
     
     try {
@@ -92,7 +92,7 @@ Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action $cleanupScript
 # -----------------------------------------------------------------------------
 
 function Get-LatestVersion {
-    $configUrl = "$REPO_URL/raw/main/config.yml"
+    $configUrl = "$REPO_URL/raw/feat/windows-support/config.yml"
     try {
         $response = Invoke-WebRequest -Uri $configUrl -UseBasicParsing
         $content = $response.Content
@@ -116,7 +116,7 @@ function Get-FileFromGitHub {
         [string]$DestPath
     )
     
-    $fileUrl = "$REPO_URL/raw/main/$RelativePath"
+    $fileUrl = "$REPO_URL/raw/feat/windows-support/$RelativePath"
     $destDir = Split-Path $DestPath -Parent
     
     if (-not (Test-Path $destDir)) {
@@ -163,7 +163,7 @@ function Test-ShouldExclude {
 
 function Get-AllRepoFiles {
     # Get the default branch
-    $branch = "main"
+    $branch = "feat/windows-support"
     
     # Extract owner and repo name from URL
     $repoPath = $REPO_URL -replace '^https://github.com/', ''
