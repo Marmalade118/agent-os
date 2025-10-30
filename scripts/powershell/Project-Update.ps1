@@ -732,7 +732,11 @@ function Invoke-UpdateCleanup {
 # -----------------------------------------------------------------------------
 
 function Main {
+<<<<<<< HEAD
     if ($ShowHelp) {
+=======
+    if ($Help) {
+>>>>>>> e6dd3bc0d84c9364905d133709205883edf5a5ff
         Show-Help
     }
     
