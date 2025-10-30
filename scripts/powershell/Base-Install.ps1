@@ -1,6 +1,6 @@
 # =============================================================================
 # Agent OS Base Installation Script - PowerShell Version
-# Installs Agent OS from GitHub repository to ~/agent-os
+# Installs Agent OS from GitHub repository to %USERPROFILE%\agent-os
 # =============================================================================
 
 [CmdletBinding()]
@@ -291,7 +291,7 @@ function Install-AllFiles {
         }
         
         if ($fileCount -gt 0) {
-            Write-Success "Installed $fileCount files to ~/agent-os"
+            Write-Success "Installed $fileCount files to $BASE_DIR"
         } else {
             Write-Error "No files were downloaded"
             return $false
@@ -350,44 +350,44 @@ function Show-OverwritePrompt {
     Write-ColorOutput $YELLOW "1) Full update"
     Write-Host ""
     Write-Host "    Updates & overwrites:"
-    Write-Host "    - ~/agent-os/profiles/default/*"
-    Write-Host "    - ~/agent-os/scripts/*"
-    Write-Host "    - ~/agent-os/CHANGELOG.md"
+    Write-Host "    - $BASE_DIR\profiles\default\*"
+    Write-Host "    - $BASE_DIR\scripts\*"
+    Write-Host "    - $BASE_DIR\CHANGELOG.md"
     Write-Host ""
-    Write-Host "    Updates your version number in ~/agent-os/config.yml but doesn't change anything else in this file."
+    Write-Host "    Updates your version number in $BASE_DIR\config.yml but doesn't change anything else in this file."
     Write-Host ""
-    Write-Host "    Everything else in your ~/agent-os folder will remain intact."
+    Write-Host "    Everything else in your $BASE_DIR folder will remain intact."
     Write-Host ""
     
     Write-ColorOutput $YELLOW "2) Update default profile only"
     Write-Host ""
     Write-Host "    Updates & overwrites:"
-    Write-Host "    - ~/agent-os/profiles/default/*"
+    Write-Host "    - $BASE_DIR\profiles\default\*"
     Write-Host ""
-    Write-Host "    Everything else in your ~/agent-os folder will remain intact."
+    Write-Host "    Everything else in your $BASE_DIR folder will remain intact."
     Write-Host ""
     
     Write-ColorOutput $YELLOW "3) Update scripts only"
     Write-Host ""
     Write-Host "    Updates & overwrites:"
-    Write-Host "    - ~/agent-os/scripts/*"
+    Write-Host "    - $BASE_DIR\scripts\*"
     Write-Host ""
-    Write-Host "    Everything else in your ~/agent-os folder will remain intact."
+    Write-Host "    Everything else in your $BASE_DIR folder will remain intact."
     Write-Host ""
     
     Write-ColorOutput $YELLOW "4) Update config.yml only"
     Write-Host ""
     Write-Host "    Updates & overwrites:"
-    Write-Host "    - ~/agent-os/config.yml"
+    Write-Host "    - $BASE_DIR\config.yml"
     Write-Host ""
-    Write-Host "    Everything else in your ~/agent-os folder will remain intact."
+    Write-Host "    Everything else in your $BASE_DIR folder will remain intact."
     Write-Host ""
     
     Write-ColorOutput $YELLOW "5) Delete & reinstall fresh"
     Write-Host ""
-    Write-Host "    - Makes a backup of your current ~/agent-os folder at ~/agent-os.backup"
-    Write-Host "    - Deletes your current ~/agent-os folder and all of its contents."
-    Write-Host "    - Installs a fresh ~/agent-os base installation"
+    Write-Host "    - Makes a backup of your current $BASE_DIR folder at $BASE_DIR.backup"
+    Write-Host "    - Deletes your current $BASE_DIR folder and all of its contents."
+    Write-Host "    - Installs a fresh Agent OS base installation"
     Write-Host ""
     
     Write-ColorOutput $YELLOW "6) Cancel and abort"
@@ -440,7 +440,7 @@ function New-Backup {
         Remove-Item $backupPath -Recurse -Force
     }
     Copy-Item $BASE_DIR $backupPath -Recurse
-    Write-Success "Backed up existing installation to ~/agent-os.backup"
+    Write-Success "Backed up existing installation to $BASE_DIR.backup"
     Write-Host ""
 }
 
@@ -521,7 +521,7 @@ function Invoke-OverwriteAll {
         Remove-Item $backupPath -Recurse -Force
     }
     Move-Item $BASE_DIR $backupPath
-    Write-Success "Backed up existing installation to ~/agent-os.backup"
+    Write-Success "Backed up existing installation to $BASE_DIR.backup"
     Write-Host ""
     
     # Perform fresh installation
@@ -598,12 +598,12 @@ function Invoke-FreshInstallation {
     Write-Host ""
     Write-Status "Configuration:"
     Write-Host "  Repository: $YELLOW$REPO_URL$NC"
-    Write-Host "  Target: ${YELLOW}~/agent-os$NC"
+    Write-Host "  Target: $YELLOW$BASE_DIR$NC"
     Write-Host ""
     
     # Create base directory
     New-DirectoryIfNotExists $BASE_DIR
-    Write-Success "Created base directory: ~/agent-os"
+    Write-Success "Created base directory: $BASE_DIR"
     Write-Host ""
     
     # Install all files from repository
@@ -617,13 +617,13 @@ function Invoke-FreshInstallation {
     Write-Host ""
     Write-ColorOutput $script:Colors.GREEN "Next steps:"
     Write-Host ""
-    Write-ColorOutput $script:Colors.GREEN "1) Customize your profile's standards in ~/agent-os/profiles/default/standards"
+    Write-ColorOutput $script:Colors.GREEN "1) Customize your profile's standards in $BASE_DIR\profiles\default\standards"
     Write-Host ""
     Write-ColorOutput $script:Colors.GREEN "2) Navigate to a project directory"
     Write-Host "   ${YELLOW}cd path\to\project-directory$NC"
     Write-Host ""
     Write-ColorOutput $script:Colors.GREEN "3) Install Agent OS in your project by running:"
-    Write-Host "   ${YELLOW}& `"$env:USERPROFILE\agent-os\scripts\powershell\Project-Install.ps1`"$NC"
+    Write-Host "   ${YELLOW}& `"$BASE_DIR\scripts\powershell\Project-Install.ps1`"$NC"
     Write-Host ""
     Write-ColorOutput $script:Colors.GREEN "Visit the docs for guides on how to use Agent OS: https://buildermethods.com/agent-os"
     Write-Host ""
