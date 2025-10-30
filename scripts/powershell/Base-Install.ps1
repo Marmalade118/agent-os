@@ -48,8 +48,8 @@ function Get-CommonFunctions {
         New-Item -ItemType Directory -Path $TEMP_DIR -Force | Out-Null
         Invoke-WebRequest -Uri $functionsUrl -OutFile $commonFunctionsTemp -UseBasicParsing
         
-        # Import the common functions
-        . $commonFunctionsTemp
+        # Import the common functions as a module
+        Import-Module $commonFunctionsTemp -Force
         return $true
     }
     catch {
@@ -57,7 +57,7 @@ function Get-CommonFunctions {
         $localCommonFunctions = Join-Path $PSScriptRoot "Common-Functions.ps1"
         if (Test-Path $localCommonFunctions) {
             Write-BootstrapStatus "Using local Common-Functions.ps1..."
-            . $localCommonFunctions
+            Import-Module $localCommonFunctions -Force
             return $true
         }
         Write-BootstrapError "Failed to download Common-Functions.ps1 and no local copy found: $_"
