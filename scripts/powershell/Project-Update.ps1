@@ -30,10 +30,13 @@ $PROJECT_DIR = Get-Location
 # Source common functions
 $commonFunctionsPath = Join-Path $SCRIPT_DIR "Common-Functions.ps1"
 if (-not (Test-Path $commonFunctionsPath)) {
-    Write-Host "Error: Common-Functions.ps1 not found at $commonFunctionsPath" -ForegroundColor Red
-    exit 1
+    # If Common-Functions.ps1 is not found locally, assume it's already imported as a module
+    # This allows the script to work when Common-Functions is imported externally
+    Write-Verbose "Common-Functions.ps1 not found locally, assuming it's imported as a module"
+} else {
+    # Import as module if found locally
+    Import-Module $commonFunctionsPath -Force
 }
-. $commonFunctionsPath
 
 # Set script variables for common functions
 $script:BASE_DIR = $BASE_DIR
