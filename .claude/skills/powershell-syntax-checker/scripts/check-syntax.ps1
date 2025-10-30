@@ -77,6 +77,35 @@ function Test-PowerShellSyntax {
                     }
                 }
                 
+                # Check for module import conflicts
+                $hasDotSource = $content -match '\.\s+\$\w+'
+                $hasImportModule = $content -match 'Import-Module.*\$\w+'
+                if ($hasDotSource -and $hasImportModule) {
+                    $warnings += @{
+                        Line = 0
+                        Message = "Module import conflict: script uses both dot-sourcing and Import-Module patterns"
+                        Type = "ModuleConflict"
+                    }
+                }
+                
+                # Check for parameter parsing issues with external files
+                if ($content -match '\[CmdletBinding\(\)\]' -and $content -match 'Get-Content.*config\.yml') {
+                    $warnings += @{
+                        Line = 0
+                        Message = "Potential parameter parsing conflict with external file operations"
+                        Type = "ParameterConflict"
+                    }
+                }
+                
+                # Check for both dot-sourcing and Import-Module in dependency chain
+                if ($content -match '\.\s+.*Common.*\.ps1' -and $content -match 'Import-Module.*Common.*\.ps1') {
+                    $warnings += @{
+                        Line = 0
+                        Message = "Mixed module loading: both dot-sourcing and Import-Module for Common functions"
+                        Type = "ModuleConflict"
+                    }
+                }
+                
                 if ($content -match 'Export-ModuleMember\s+[^-]') {
                     $warnings += @{
                         Line = 0

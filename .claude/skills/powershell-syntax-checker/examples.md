@@ -1,6 +1,146 @@
 # PowerShell Syntax Checker Examples
 
-This document provides practical examples of using the PowerShell Syntax Checker skill.
+This document provides practical examples of using the enhanced PowerShell Syntax Checker skill.
+
+## Basic Usage Examples
+
+### Check a Single Script
+```powershell
+.\scripts\check-syntax.ps1 -Path "MyScript.ps1"
+```
+
+### Check All Scripts in Directory
+```powershell
+.\scripts\check-syntax.ps1 -Path "C:\Scripts" -Recursive
+```
+
+### Detailed Analysis with Warnings
+```powershell
+.\scripts\check-syntax.ps1 -Path "MyScript.ps1" -Detailed
+```
+
+## Enhanced Conflict Detection
+
+### Module Import Conflicts
+The enhanced checker detects module import conflicts that can cause parameter parsing issues:
+
+```powershell
+# This pattern will trigger a warning:
+. $commonFunctionsPath        # Dot-sourcing
+Import-Module $commonFunctionsPath  # Import-Module
+
+# Warning: "Module import conflict: script uses both dot-sourcing and Import-Module patterns"
+```
+
+### CmdletBinding Parameter Conflicts
+Detects custom parameters that conflict with built-in CmdletBinding parameters:
+
+```powershell
+[CmdletBinding()]
+param(
+    [switch]$Verbose,  # Conflicts with built-in -Verbose
+    [switch]$Help      # May conflict with built-in help
+)
+
+# Warnings:
+# "Custom Verbose parameter conflicts with CmdletBinding"
+# "Custom Help parameter may conflict with CmdletBinding"
+```
+
+### Parameter Parsing Conflict Detection
+Identifies potential issues where external files might be interpreted as script parameters:
+
+```powershell
+[CmdletBinding()]
+param([string]$Profile)
+
+# Operations that might cause parameter conflicts
+$config = Get-Content config.yml | ConvertFrom-Yaml
+
+# Warning: "Potential parameter parsing conflict with external file operations"
+```
+
+## Real-World Agent OS Example
+
+Based on debugging experience with Agent OS PowerShell scripts:
+
+```powershell
+# Check all Agent OS PowerShell scripts for common issues
+.\scripts\check-syntax.ps1 -Path "..\..\scripts\powershell" -Detailed -Recursive -AnalyzeOnly
+```
+
+This detects:
+- Module import conflicts between dot-sourcing and Import-Module
+- CmdletBinding parameter conflicts with custom Help/Verbose parameters  
+- Potential config.yml parameter parsing issues
+- Best practice violations
+
+## Output Examples
+
+### Success Output
+```
+Checking 1 PowerShell file...
+✓ Project-Install.ps1
+
+=== PowerShell Syntax Check Results ===
+Files checked: 1
+Valid: 1
+Errors: 0
+```
+
+### Warning Output
+```
+⚠ test-script.ps1
+  Custom Verbose parameter conflicts with CmdletBinding
+  Module import conflict: script uses both dot-sourcing and Import-Module patterns
+  Potential parameter parsing conflict with external file operations
+```
+
+### Error Output  
+```
+✗ broken-script.ps1
+  Line 15, Column 8: Unexpected token 'if' in expression or statement.
+```
+
+## Advanced Features
+
+### JSON Output for Integration
+```powershell
+.\scripts\check-syntax.ps1 -Path "MyScript.ps1" -Json | ConvertFrom-Json
+```
+
+### Analyze Only Mode
+```powershell
+.\scripts\check-syntax.ps1 -Path "C:\Scripts" -AnalyzeOnly -Detailed
+```
+
+## Warning Types
+
+The enhanced checker categorizes issues:
+
+- **BestPractice**: General PowerShell best practice violations
+- **ModuleConflict**: Module import pattern conflicts  
+- **ParameterConflict**: Parameter parsing and binding issues
+
+## Integration with Development Workflow
+
+### Pre-commit Hook
+```bash
+# .git/hooks/pre-commit
+#!/bin/sh
+pwsh -File ".claude/skills/powershell-syntax-checker/scripts/check-syntax.ps1" -Path "scripts/powershell" -Recursive
+exit $?
+```
+
+### CI/CD Pipeline
+```yaml
+# Azure DevOps pipeline step
+- task: PowerShell@2
+  displayName: 'PowerShell Syntax Check'
+  inputs:
+    filePath: '.claude/skills/powershell-syntax-checker/scripts/check-syntax.ps1'
+    arguments: '-Path "$(Build.SourcesDirectory)/scripts" -Recursive -AnalyzeOnly'
+```
 
 ## Basic Usage Examples
 
